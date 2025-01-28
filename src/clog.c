@@ -140,3 +140,35 @@ void log_init(LogConfig *config) {
 
   last_rotation_time = time(NULL);
 }
+
+/**
+ * @brief Rotates the log file based on the configured interval.
+ */
+static void rotate_log_file() {
+  if (!log_config.rotation_interval || !log_config.log_file_path)
+    return;
+
+  time_t now = time(NULL);
+
+  if (difftime(now, last_rotation_time) < log_config.rotation_interval * 60)
+    return;
+
+  pthread_mutex_lock(&log_mutex);
+
+  if (log_file)
+    fclose(log_file);
+
+  char resolved_path[1024];
+  resolve_file_path(resolved_path, sizeof(resolved_path));
+
+  log_file = fopen(resolved_path, "a");
+
+  if (!log_file) {
+    perror("Failed to rotate log file");
+    log_file = NULL;
+  }
+
+  last_rotation_time = now;
+
+  pthread_mutex_unlock(&log_mutex);
+}
