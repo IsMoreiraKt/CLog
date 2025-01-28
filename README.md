@@ -8,6 +8,8 @@
 
 CLog is a lightweight and flexible C logging library that supports formatted logs with severity levels, file rotation, domain filtering and thread safety. It's designed to be highly configurable yet simple to use, making it an excellent choice for logging in both small and complex C projects.
 
+<br><br>
+
 ## How to Install
 To install CLog, clone the repository and use the provided Makefile to copy the library files to the appropriate system directories.
 
