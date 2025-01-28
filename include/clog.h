@@ -50,4 +50,14 @@ typedef struct {
  */
 void log_init(LogConfig *config);
 
+/**
+ * @brief Logs a message.
+ *
+ * @param domain The domain associated with the log message.
+ * @param level The severity level of the log message.
+ * @param format A printf-like format string.
+ * @param ... Variadic arguments for the formatted message.
+ */
+void log_message(const char *domain, LogLevel level, const char *format, ...);
+
 #endif // CLOG_H
