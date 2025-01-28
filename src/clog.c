@@ -63,3 +63,15 @@ static int is_ignored_domain(const char *domain) {
 
   return 0;
 }
+
+/**
+ * @brief Generates a UUID and writes it to a buffer.
+ *
+ * @param uuid_buffer The buffer to store the UUID.
+ * @param size The size of the buffer.
+ */
+static void generate_uuid(char *uuid_buffer, size_t size) {
+  uuid_t uuid;
+  uuid_generate(uuid);
+  uuid_unparse(uuid, uuid_buffer);
+}
