@@ -60,4 +60,9 @@ void log_init(LogConfig *config);
  */
 void log_message(const char *domain, LogLevel level, const char *format, ...);
 
+/**
+ * @brief Closes the logging system, ensuring all resources are released.
+ */
+void log_close(void);
+
 #endif // CLOG_H
