@@ -45,3 +45,21 @@ static const char *log_level_str(LogLevel level) {
     return " UNKNOWN";
   }
 }
+
+/**
+ * @brief Checks if a domain is in the ignored domains list.
+ *
+ * @param domain The domain to check.
+ * @return 1 if the domain is ignored, 0 otherwise.
+ */
+static int is_ignored_domain(const char *domain) {
+  if (!log_config.ignored_domains || !domain)
+    return 0;
+
+  for (char **d = log_config.ignored_domains; *d; d++) {
+    if (strcmp(*d, domain) == 0)
+      return 1;
+  }
+
+  return 0;
+}
