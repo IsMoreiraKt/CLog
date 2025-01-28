@@ -75,3 +75,38 @@ static void generate_uuid(char *uuid_buffer, size_t size) {
   uuid_generate(uuid);
   uuid_unparse(uuid, uuid_buffer);
 }
+
+/**
+ * @brief Resolves placeholders in the log file path (e.g., {uuid},
+ * {timestamp}).
+ *
+ * @param resolved_path The buffer to store the resolved path.
+ * @param size The size of the buffer.
+ */
+static void resolve_file_path(char *resolved_path, size_t size) {
+  if (!log_config.log_file_path)
+    return;
+
+  snprintf(resolved_path, size, "%s", log_config.log_file_path);
+
+  char uuid[37];
+  generate_uuid(uuid, sizeof(uuid));
+  char *uuid_placeholder = strstr(resolved_path, "{uuid}");
+
+  if (uuid_placeholder) {
+    snprintf(uuid_placeholder, size - (uuid_placeholder - resolved_path),
+             "%s%s", uuid, uuid_placeholder + 6);
+  }
+
+  time_t now = time(NULL);
+  struct tm *tm_now = localtime(&now);
+  char timestamp[64];
+  strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", tm_now);
+  char *timestamp_placeholder = strstr(resolved_path, "{timestamp}");
+
+  if (timestamp_placeholder) {
+    snprintf(timestamp_placeholder,
+             size - (timestamp_placeholder - resolved_path), "%s%s", timestamp,
+             timestamp_placeholder + 11);
+  }
+}
