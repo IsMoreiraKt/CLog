@@ -172,3 +172,55 @@ static void rotate_log_file() {
 
   pthread_mutex_unlock(&log_mutex);
 }
+
+/**
+ * @brief Logs a message to the configured outputs.
+ *
+ * @param domain The domain associated with the log message.
+ * @param level The severity level of the log message.
+ * @param format A printf-like format string.
+ * @param ... Variadic arguments for the formatted message.
+ */
+void log_message(const char *domain, LogLevel level, const char *format, ...) {
+  if (is_ignored_domain(domain))
+    return;
+
+  rotate_log_file();
+
+  time_t now = time(NULL);
+  struct tm *tm_now = localtime(&now);
+  char time_buffer[64];
+  strftime(time_buffer, sizeof(time_buffer), "%H:%M:%S", tm_now);
+
+  struct timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  int microsecond = ts.tv_nsec / 1000;
+
+  va_list args;
+  va_start(args, format);
+  char message[1024];
+  vsnprintf(message, sizeof(message), format, args);
+  va_end(args);
+
+  pthread_mutex_lock(&log_mutex);
+
+  if (log_config.log_to_stdout) {
+    fprintf(stdout, "%s.%06d  %28s: %s: %s\n", time_buffer, microsecond,
+            domain ? domain : "General", log_level_str(level), message);
+    fflush(stdout);
+  }
+
+  if (log_config.log_to_stderr) {
+    fprintf(stderr, "%s.%06d  %28s: %s: %s\n", time_buffer, microsecond,
+            domain ? domain : "General", log_level_str(level), message);
+    fflush(stderr);
+  }
+
+  if (log_file) {
+    fprintf(log_file, "%s.%06d  %28s: %s: %s\n", time_buffer, microsecond,
+            domain ? domain : "General", log_level_str(level), message);
+    fflush(log_file);
+  }
+
+  pthread_mutex_unlock(&log_mutex);
+}
