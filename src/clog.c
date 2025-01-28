@@ -224,3 +224,16 @@ void log_message(const char *domain, LogLevel level, const char *format, ...) {
 
   pthread_mutex_unlock(&log_mutex);
 }
+
+/**
+ * @brief Closes the logging system and releases resources.
+ */
+void log_close(void) {
+  pthread_mutex_lock(&log_mutex);
+
+  if (log_file)
+    fclose(log_file);
+
+  log_file = NULL;
+  pthread_mutex_unlock(&log_mutex);
+}
