@@ -110,3 +110,33 @@ static void resolve_file_path(char *resolved_path, size_t size) {
              timestamp_placeholder + 11);
   }
 }
+
+/**
+ * @brief Initializes the logging system with the provided configuration.
+ *
+ * @param config Pointer to a configuration structure containing logging
+ * preferences.
+ */
+void log_init(LogConfig *config) {
+  if (config) {
+    if (config->log_to_stdout || config->log_to_stderr ||
+        config->log_file_path || config->rotation_interval ||
+        config->ignored_domains) {
+      log_config = *config;
+    }
+  }
+
+  if (log_config.log_file_path) {
+    char resolved_path[1024];
+    resolve_file_path(resolved_path, sizeof(resolved_path));
+
+    log_file = fopen(resolved_path, "a");
+
+    if (!log_file) {
+      perror("Failed to open log file");
+      log_file = NULL;
+    }
+  }
+
+  last_rotation_time = time(NULL);
+}
