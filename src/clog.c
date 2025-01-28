@@ -18,3 +18,30 @@ static LogConfig log_config = {
 };
 static time_t last_rotation_time =
     0; /**< Timestamp of the last log file rotation. */
+
+/**
+ * @brief Converts a log level to a human-readable string with formatting.
+ *
+ * @param level The log level to convert.
+ * @return A string representing the log level.
+ */
+static const char *log_level_str(LogLevel level) {
+  switch (level) {
+  case LOG_LEVEL_ERROR:
+    return "   \033[1;31mERROR\033[0m";
+  case LOG_LEVEL_CRITICAL:
+    return "\033[1;35mCRITICAL\033[0m";
+  case LOG_LEVEL_WARNING:
+    return " \033[1;33mWARNING\033[0m";
+  case LOG_LEVEL_MESSAGE:
+    return " \033[1;34mMESSAGE\033[0m";
+  case LOG_LEVEL_INFO:
+    return "    \033[1;32mINFO\033[0m";
+  case LOG_LEVEL_DEBUG:
+    return "   \033[1;32mDEBUG\033[0m";
+  case LOG_LEVEL_TRACE:
+    return "   \033[1;36mTRACE\033[0m";
+  default:
+    return " UNKNOWN";
+  }
+}
