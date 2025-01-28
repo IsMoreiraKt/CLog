@@ -42,4 +42,12 @@ typedef struct {
   char **ignored_domains; /**< List of domains to be ignored in logging. */
 } LogConfig;
 
+/**
+ * @brief Initializes the logging system with the provided configuration.
+ *
+ * @param config Pointer to a configuration structure containing log
+ * preferences.
+ */
+void log_init(LogConfig *config);
+
 #endif // CLOG_H
